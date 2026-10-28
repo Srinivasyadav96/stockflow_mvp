@@ -1,0 +1,134 @@
+
+{% extends "base.html" %}
+
+{% block title %}Products | StockFlow{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Products</h2>
+        <p class="text-secondary mb-0">
+            Manage your organization's inventory.
+        </p>
+    </div>
+
+    <a href="{% url 'product_create' %}"
+       class="btn btn-primary mt-3 mt-md-0">
+        + Add Product
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+
+        <form method="get" class="row g-2 mb-4">
+            <div class="col-md-9">
+                <input
+                    type="search"
+                    name="q"
+                    class="form-control"
+                    placeholder="Search by product name or SKU"
+                    value="{{ search_query }}"
+                >
+            </div>
+
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit"
+                        class="btn btn-dark flex-grow-1">
+                    Search
+                </button>
+
+                <a href="{% url 'product_list' %}"
+                   class="btn btn-outline-secondary">
+                    Clear
+                </a>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Product Name</th>
+                        <th>SKU</th>
+                        <th>Quantity</th>
+                        <th>Selling Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td class="fw-semibold">
+                            {{ product.name }}
+                        </td>
+
+                        <td>{{ product.sku }}</td>
+
+                        <td>{{ product.quantity }}</td>
+
+                        <td>
+                            {% if product.selling_price != None %}
+                                ₹{{ product.selling_price|floatformat:2 }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if product.is_low_stock %}
+                                <span class="badge bg-danger">
+                                    Low Stock
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success">
+                                    In Stock
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a
+                                    href="{% url 'product_edit' product.pk %}"
+                                    class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+
+                                <a
+                                    href="{% url 'product_delete' product.pk %}"
+                                    class="btn btn-sm btn-outline-danger">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <h5>No products found</h5>
+                            <p class="text-secondary mb-0">
+                                Add a product or change your search.
+                            </p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{% url 'dashboard' %}"
+       class="btn btn-outline-secondary">
+        Back to Dashboard
+    </a>
+</div>
+
+{% endblock %}

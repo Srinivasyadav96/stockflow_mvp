@@ -1,0 +1,133 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | StockFlow{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1">Dashboard</h2>
+    <p class="text-secondary mb-0">
+        Welcome to {{ organization.name }}.
+        Here is your inventory overview.
+    </p>
+</div>
+
+<div class="mb-4">
+    <a href="{% url 'product_list' %}"
+       class="btn btn-primary">
+        Manage Products
+    </a>
+
+    <a href="{% url 'product_create' %}"
+       class="btn btn-outline-primary ms-2">
+        + Add Product
+    </a>
+</div>
+
+<!-- Summary cards -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <p class="text-secondary mb-2">Total Products</p>
+                <h2 class="display-5 fw-bold mb-0">
+                    {{ total_products }}
+                </h2>
+                <small class="text-secondary">
+                    Products in your inventory
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <p class="text-secondary mb-2">Total Stock Quantity</p>
+                <h2 class="display-5 fw-bold mb-0">
+                    {{ total_quantity }}
+                </h2>
+                <small class="text-secondary">
+                    Total units available
+                </small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Low-stock products -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+
+        <div class="d-flex flex-wrap justify-content-between
+                    align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-1">Low-stock items</h4>
+                <p class="text-secondary mb-0">
+                    Products that need replenishment.
+                </p>
+            </div>
+
+            <span class="badge text-bg-warning">
+                {{ low_stock_products|length }} items
+            </span>
+        </div>
+
+        {% if low_stock_products %}
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product Name</th>
+                            <th>SKU</th>
+                            <th>Quantity on Hand</th>
+                            <th>Low-stock Threshold</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for product in low_stock_products %}
+                            <tr>
+                                <td class="fw-semibold">
+                                    {{ product.name }}
+                                </td>
+
+                                <td>{{ product.sku }}</td>
+
+                                <td>
+                                    <span class="badge text-bg-danger">
+                                        {{ product.quantity }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ product.effective_low_stock_threshold }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-5">
+                <h5>No low-stock items</h5>
+                <p class="text-secondary mb-0">
+                    Your inventory has no items at or below their
+                    low-stock thresholds.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
